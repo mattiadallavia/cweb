@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <errno.h>
@@ -51,8 +52,8 @@ int dhttp_request(struct dhttp_connection* conn, struct dhttp_request* req, char
 int dhttp_request_pack(struct dhttp_request* req);
 int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req);
 
-int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res);
 int dhttp_response_unpack(struct dhttp_response* res);
+int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res);
 
 char* dhttp_header(void* r, char* name, char* val);
 int dhttp_headers_pack(struct dhttp_request* req, unsigned int pos);
