@@ -77,7 +77,7 @@ int dhttp_request_pack(struct dhttp_request* req)
 
 int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req)
 {
-	if (!req->packed) dhttp_request_pack(req);
+	if (!req->packed) dhttp_request_pack(req); // auto pack before sending
 
 	int w = write(conn->socket, req->buf, req->buf_len - req->sent);
 	req->sent += w;
@@ -87,7 +87,7 @@ int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req)
 
 int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res)
 {
-	int r = read(conn->socket, res->buf, DHTTP_BUF_MAX - res->buf_len);
+	int r = read(conn->socket, res->buf + res->buf_len, DHTTP_BUF_MAX - res->buf_len);
 	res->buf_len += r;
 
 	if (res->buf_len >= DHTTP_BUF_MAX)
@@ -95,8 +95,54 @@ int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res)
 		errno = EMSGSIZE; // Message too long
 		return -1;
 	}
+
+	if (!res->unpacked) dhttp_response_unpack(res); // auto unpack when finished
 	
 	return r;
+}
+
+int dhttp_response_unpack(struct dhttp_response* res)
+{
+	char* buf_next = res->buf;
+
+	for (res->version = buf_next; *buf_next != ' '; buf_next++) ;
+	*buf_next = 0; // tappo
+	buf_next++;
+
+	for (res->status = buf_next; *buf_next != ' '; buf_next++);
+	*buf_next = 0; // tappo
+	buf_next++;
+
+	for (res->status_phrase = buf_next; *buf_next != '\r'; buf_next++);
+	*buf_next = 0; // tappo
+	buf_next+=2; // skip \n
+
+	buf_next = dhttp_headers_unpack(res, buf_next - res->buf) + res->buf;
+	res->body = buf_next;
+
+	res->unpacked = 1;
+
+	return 0;
+}
+
+int dhttp_headers_unpack(struct dhttp_response* res, unsigned int pos)
+{
+	char* buf_next = res->buf + pos;
+
+	while (*buf_next != '\r')
+	{
+		for (res->headers[res->headers_num].name = buf_next; *buf_next != ':'; buf_next++);
+		*buf_next = 0;
+		buf_next+=2; // skip space
+
+		for (res->headers[res->headers_num].value = buf_next; *buf_next != '\r'; buf_next++);
+		*buf_next = 0;
+		buf_next+=2; // skip \n
+
+		res->headers_num++;
+	}
+
+	return buf_next - res->buf + 2;
 }
 
 char* dhttp_header(void* r, char* name, char* val)

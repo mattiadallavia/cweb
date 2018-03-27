@@ -33,15 +33,16 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	printf("%s\n", res.buf);
+	printf("%s %s %s\n", res.version, res.status, res.status_phrase);
+	printf("--------------------------------------------------------------------------------\n");
+	for (int i = 0; i < res.headers_num; i++) printf("%s: %s\n", res.headers[i].name, res.headers[i].value);
+	printf("--------------------------------------------------------------------------------\n");
+	printf("%s\n", res.body);
 
 	if (dhttp_close(&conn)) {
 		perror("Failed closing the http connection");
 		return 1;
 	}
-
-	// printf("%n\n", req.buf);
-	// for (int i = 0; i < req.headers_num; i++) printf("%s: %s\n", req.headers[i].name, req.headers[i].value);
 
 	return 0;
 }
