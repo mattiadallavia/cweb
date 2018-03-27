@@ -58,20 +58,11 @@ int dhttp_request(struct dhttp_connection* conn, struct dhttp_request* req, char
 
 int dhttp_request_pack(struct dhttp_request* req)
 {
-	sprintf(req->buf + req->buf_len, "%s %s %s\r\n", req->method, req->path, req->version);
-	req->buf_len += strlen(req->buf + req->buf_len);
+	sprintf(req->buf, "%s %s %s\r\n", req->method, req->path, req->version);
 
-	for (int i = 0; i < req->headers_num; i++)
-	{
-		sprintf(req->buf + req->buf_len, "%s: %s\r\n", req->headers[i].name, req->headers[i].value);
-		req->buf_len += strlen(req->buf + req->buf_len);
-	}
-
-	sprintf(req->buf + req->buf_len, "\r\n");
-	req->buf_len += strlen(req->buf + req->buf_len);
+	req->buf_len = dhttp_headers_pack(req, strlen(req->buf));
 
 	req->packed = 1;
-
 	return 0;
 }
 
@@ -117,11 +108,9 @@ int dhttp_response_unpack(struct dhttp_response* res)
 	*buf_next = 0; // tappo
 	buf_next+=2; // skip \n
 
-	buf_next = dhttp_headers_unpack(res, buf_next - res->buf) + res->buf;
-	res->body = buf_next;
+	res->body = dhttp_headers_unpack(res, buf_next - res->buf) + res->buf;
 
 	res->unpacked = 1;
-
 	return 0;
 }
 
@@ -143,6 +132,21 @@ int dhttp_headers_unpack(struct dhttp_response* res, unsigned int pos)
 	}
 
 	return buf_next - res->buf + 2;
+}
+
+int dhttp_headers_pack(struct dhttp_request* req, unsigned int pos)
+{
+	char* buf_next = req->buf + pos;
+
+	for (int i = 0; i < req->headers_num; i++)
+	{
+		sprintf(buf_next, "%s: %s\r\n", req->headers[i].name, req->headers[i].value);
+		buf_next += strlen(buf_next);
+	}
+
+	sprintf(buf_next, "\r\n");
+
+	return buf_next - req->buf + 2;
 }
 
 char* dhttp_header(void* r, char* name, char* val)

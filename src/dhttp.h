@@ -55,4 +55,5 @@ int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res);
 int dhttp_response_unpack(struct dhttp_response* res);
 
 char* dhttp_header(void* r, char* name, char* val);
+int dhttp_headers_pack(struct dhttp_request* req, unsigned int pos);
 int dhttp_headers_unpack(struct dhttp_response* res, unsigned int pos);
