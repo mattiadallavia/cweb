@@ -37,6 +37,7 @@ struct dhttp_response {
 	struct dhttp_header headers[DHTTP_HEADERS_MAX];
 	size_t headers_num;
 	char buf[DHTTP_BUF_MAX];
+	size_t buf_len;
 };
 
 int dhttp_connect(struct dhttp_connection* conn, char* address);

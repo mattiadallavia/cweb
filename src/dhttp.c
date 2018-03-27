@@ -80,14 +80,23 @@ int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req)
 	if (!req->packed) dhttp_request_pack(req);
 
 	int w = write(conn->socket, req->buf, req->buf_len - req->sent);
-
 	req->sent += w;
+
 	return w;
 }
 
 int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res)
 {
-	return 0;
+	int r = read(conn->socket, res->buf, DHTTP_BUF_MAX - res->buf_len);
+	res->buf_len += r;
+
+	if (res->buf_len >= DHTTP_BUF_MAX)
+	{
+		errno = EMSGSIZE; // Message too long
+		return -1;
+	}
+	
+	return r;
 }
 
 char* dhttp_header(void* r, char* name, char* val)
