@@ -46,6 +46,6 @@ int dhttp_request(struct dhttp_connection* conn, struct dhttp_request* req, char
 int dhttp_request_pack(struct dhttp_request* req);
 int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req);
 
-int dhttp_receive(struct dhttp_connection* conn);
+int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res);
 
 char* dhttp_header(void* r, char* name, char* val);

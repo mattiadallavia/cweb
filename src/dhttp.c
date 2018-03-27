@@ -85,6 +85,11 @@ int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req)
 	return w;
 }
 
+int dhttp_receive(struct dhttp_connection* conn, struct dhttp_response* res)
+{
+	return 0;
+}
+
 char* dhttp_header(void* r, char* name, char* val)
 {
 	struct dhttp_request* re = (struct dhttp_request*) r;
