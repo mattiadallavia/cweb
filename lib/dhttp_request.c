@@ -13,11 +13,13 @@ int dhttp_request(struct dhttp_connection* conn, struct dhttp_request* req, char
 
 int dhttp_send(struct dhttp_connection* conn, struct dhttp_request* req)
 {
+	int w;
+
 	if (!req->packed) dhttp_request_pack(req); // auto pack before sending
 
-	int w = write(conn->socket, req->buf, req->buf_len - req->sent);
-	req->sent += w;
+	w = write(conn->socket, req->buf + req->sent, req->buf_len - req->sent);
 
+	req->sent += w;
 	return w;
 }
 
