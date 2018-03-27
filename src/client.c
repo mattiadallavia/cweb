@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "dhttp.h"
+#include "../lib/dhttp.h"
 
 struct dhttp_connection conn;
 struct dhttp_request req;
