@@ -15,6 +15,7 @@ int cweb_client_destroy(struct cweb_client* client)
 struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, char* uri)
 {
 	int n;
+	char* body_len_str;
 
 	if (cweb_connect(&client->conn, host)) return 0;
 
@@ -34,10 +35,12 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 
 	cweb_response_unpack(&client->res);
 
-	// printf("%s\n", cweb_header(&client->res, "Content-Length", 0));
+	body_len_str = cweb_header(&client->res, "Content-Length", 0);
 
-	client->res.body = calloc(1, CWEB_BODY_SIZE_DEF);
-	client->res.body_size = CWEB_BODY_SIZE_DEF;
+	if (body_len_str) client->res.body_size = atoi(body_len_str) + 1; // tappo
+	else client->res.body_size = CWEB_BODY_SIZE_DEF;
+
+	client->res.body = calloc(1, client->res.body_size);
 
 	while ((n = cweb_receive_body(&client->conn, &client->res)) > 0);
 	if (n < 0) return 0;
