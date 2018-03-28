@@ -15,17 +15,20 @@
 
 #define CWEB_HTTP_DEF "HTTP/1.1"
 
-struct cweb_connection {
+struct cweb_connection
+{
 	int socket;
 	char* host;
 };
 
-struct cweb_header {
+struct cweb_header
+{
 	char* name;
 	char* value;
 };
 
-struct cweb_request {
+struct cweb_request
+{
 	char* version;
 	struct cweb_header headers[CWEB_HEADERS_MAX];
 	size_t headers_num;
@@ -36,7 +39,8 @@ struct cweb_request {
 	size_t sent;
 };
 
-struct cweb_response {
+struct cweb_response
+{
 	char* version;
 	struct cweb_header headers[CWEB_HEADERS_MAX];
 	size_t headers_num;
@@ -49,7 +53,8 @@ struct cweb_response {
 	size_t body_size;
 };
 
-struct cweb_client {
+struct cweb_client
+{
 	struct cweb_connection conn;
 	struct cweb_request req;
 	struct cweb_response res;
