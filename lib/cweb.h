@@ -65,7 +65,9 @@ int cweb_request_pack(struct cweb_request* req);
 int cweb_send(struct cweb_connection* conn, struct cweb_request* req);
 
 int cweb_receive_head(struct cweb_connection* conn, struct cweb_response* res);
-int cweb_receive_body(struct cweb_connection* conn, struct cweb_response* res);
+int cweb_receive_body(struct cweb_connection* conn, struct cweb_response*);
+int cweb_receive_chunk_head(struct cweb_connection* conn, struct cweb_response* res);
+int cweb_receive_chunk(struct cweb_connection* conn, struct cweb_response* res, size_t n);
 int cweb_response_unpack(struct cweb_response* res);
 
 char* cweb_header(void* r, char* name, char* val);

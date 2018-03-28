@@ -32,6 +32,42 @@ int cweb_receive_body(struct cweb_connection* conn, struct cweb_response* res)
 	r = read(conn->socket, res->body + res->body_len, res->body_size - res->body_len);
 	res->body_len += r;
 
+	res->body[res->body_len] = 0; // tappo
+
+	return r;
+}
+
+int cweb_receive_chunk_head(struct cweb_connection* conn, struct cweb_response* res)
+{
+	int r;
+	char* chunk_len_str = res->buf + res->buf_len;
+
+	while (((r = read(conn->socket, res->buf + res->buf_len, 1)) > 0) &&
+		    res->buf[res->buf_len] != '\n') res->buf_len++;
+
+	if (!r) return -1; // early end
+
+	res->buf[res->buf_len - 1] = 0; // tappo
+
+	return strtol(chunk_len_str, 0, 16);
+}
+
+int cweb_receive_chunk(struct cweb_connection* conn, struct cweb_response* res, size_t n)
+{
+	int r;
+
+	if (res->body_len >= res->body_size)
+	{
+		errno = EMSGSIZE; // message too long
+		return -1;
+	}
+
+	r = read(conn->socket, res->body + res->body_len, n);
+	if (!r) return -1; // early end
+
+	res->body_len += r;
+	res->body[res->body_len] = 0; // tappo
+
 	return r;
 }
 
