@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 
@@ -45,8 +46,18 @@ struct cweb_response {
 	char unpacked;
 };
 
+struct cweb_client {
+	struct cweb_connection conn;
+	struct cweb_request req;
+	struct cweb_response res;
+};
+
+struct cweb_client* cweb_client_init();
+struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, char* uri);
+int cweb_client_destroy(struct cweb_client* client);
+
 int cweb_connect(struct cweb_connection* conn, char* address);
-int cweb_close(struct cweb_connection* conn);
+int cweb_connection_close(struct cweb_connection* conn);
 
 int cweb_request(struct cweb_connection* conn, struct cweb_request* req, char* method, char* path);
 int cweb_request_pack(struct cweb_request* req);

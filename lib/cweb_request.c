@@ -14,7 +14,7 @@ int cweb_request(struct cweb_connection* conn, struct cweb_request* req, char* m
 int cweb_send(struct cweb_connection* conn, struct cweb_request* req)
 {
 	int w;
-
+	
 	if (!req->packed) cweb_request_pack(req); // auto pack before sending
 
 	w = write(conn->socket, req->buf + req->sent, req->buf_len - req->sent);

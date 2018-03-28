@@ -2,20 +2,22 @@
 
 int cweb_connect(struct cweb_connection* conn, char* address)
 {
-	int sock;
+	int sock, e;
 	struct sockaddr_in addr;
 	struct addrinfo hints, *ainfo;
+
+	memset(&hints, 0, sizeof (struct addrinfo));
 
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 
-	if (getaddrinfo(address, "http", &hints, &ainfo))
+	if (e = getaddrinfo(address, "http", &hints, &ainfo))
 	{
-		freeaddrinfo(ainfo);
+		// fprintf(stderr, "%s\n", gai_strerror(e));
 		errno = ENXIO; // No such device or address
 		return -1;
 	}
-	
+
 	if ((sock = socket(ainfo->ai_family, ainfo->ai_socktype, ainfo->ai_protocol)) < 0)
 	{
 		freeaddrinfo(ainfo);
@@ -35,7 +37,7 @@ int cweb_connect(struct cweb_connection* conn, char* address)
 	return 0;
 }
 
-int cweb_close(struct cweb_connection* conn)
+int cweb_connection_close(struct cweb_connection* conn)
 {
 	return close(conn->socket);
 }
