@@ -1,6 +1,6 @@
-#include "dhttp.h"
+#include "cweb.h"
 
-int dhttp_headers_unpack(struct dhttp_response* res, unsigned int pos)
+int cweb_headers_unpack(struct cweb_response* res, unsigned int pos)
 {
 	char* buf_next = res->buf + pos;
 
@@ -20,7 +20,7 @@ int dhttp_headers_unpack(struct dhttp_response* res, unsigned int pos)
 	return buf_next - res->buf + 2;
 }
 
-int dhttp_headers_pack(struct dhttp_request* req, unsigned int pos)
+int cweb_headers_pack(struct cweb_request* req, unsigned int pos)
 {
 	char* buf_next = req->buf + pos;
 
@@ -35,9 +35,9 @@ int dhttp_headers_pack(struct dhttp_request* req, unsigned int pos)
 	return buf_next - req->buf + 2;
 }
 
-char* dhttp_header(void* r, char* name, char* val)
+char* cweb_header(void* r, char* name, char* val)
 {
-	struct dhttp_request* re = (struct dhttp_request*) r;
+	struct cweb_request* re = (struct cweb_request*) r;
 
 	for (int i = 0; i < re->headers_num; i++)
 	{

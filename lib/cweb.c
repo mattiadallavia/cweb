@@ -1,6 +1,6 @@
-#include "dhttp.h"
+#include "cweb.h"
 
-int dhttp_connect(struct dhttp_connection* conn, char* address)
+int cweb_connect(struct cweb_connection* conn, char* address)
 {
 	int sock;
 	struct sockaddr_in addr;
@@ -35,7 +35,7 @@ int dhttp_connect(struct dhttp_connection* conn, char* address)
 	return 0;
 }
 
-int dhttp_close(struct dhttp_connection* conn)
+int cweb_close(struct cweb_connection* conn)
 {
 	return close(conn->socket);
 }
