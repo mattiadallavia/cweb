@@ -10,7 +10,7 @@
 #include <netdb.h>
 
 #define CWEB_HEADERS_MAX 100
-#define CWEB_BUF_MAX 100000
+#define CWEB_BUF_MAX 10000
 
 struct cweb_connection {
 	int socket;
@@ -31,7 +31,6 @@ struct cweb_request {
 	char buf[CWEB_BUF_MAX];
 	size_t buf_len;
 	size_t sent;
-	char packed;
 };
 
 struct cweb_response {
@@ -40,10 +39,9 @@ struct cweb_response {
 	size_t headers_num;
 	char* status;
 	char* status_phrase;
-	char* body;
 	char buf[CWEB_BUF_MAX];
 	size_t buf_len;
-	char unpacked;
+	char* body;
 };
 
 struct cweb_client {
@@ -57,14 +55,14 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 int cweb_client_destroy(struct cweb_client* client);
 
 int cweb_connect(struct cweb_connection* conn, char* address);
-int cweb_connection_close(struct cweb_connection* conn);
+int cweb_close(struct cweb_connection* conn);
 
 int cweb_request(struct cweb_connection* conn, struct cweb_request* req, char* method, char* path);
 int cweb_request_pack(struct cweb_request* req);
 int cweb_send(struct cweb_connection* conn, struct cweb_request* req);
 
-int cweb_response_unpack(struct cweb_response* res);
 int cweb_receive(struct cweb_connection* conn, struct cweb_response* res);
+int cweb_response_unpack(struct cweb_response* res);
 
 char* cweb_header(void* r, char* name, char* val);
 int cweb_headers_pack(struct cweb_request* req, unsigned int pos);

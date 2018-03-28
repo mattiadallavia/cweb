@@ -11,8 +11,6 @@ int cweb_receive(struct cweb_connection* conn, struct cweb_response* res)
 		return -1;
 	}
 
-	if (!res->unpacked) cweb_response_unpack(res); // auto unpack when finished
-	
 	return r;
 }
 
@@ -34,6 +32,5 @@ int cweb_response_unpack(struct cweb_response* res)
 
 	res->body = cweb_headers_unpack(res, buf_next - res->buf) + res->buf;
 
-	res->unpacked = 1;
 	return 0;
 }

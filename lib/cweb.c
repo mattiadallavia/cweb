@@ -37,7 +37,7 @@ int cweb_connect(struct cweb_connection* conn, char* address)
 	return 0;
 }
 
-int cweb_connection_close(struct cweb_connection* conn)
+int cweb_close(struct cweb_connection* conn)
 {
 	return close(conn->socket);
 }
