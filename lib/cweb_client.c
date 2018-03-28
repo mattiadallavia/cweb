@@ -7,6 +7,7 @@ struct cweb_client* cweb_client_init()
 
 int cweb_client_destroy(struct cweb_client* client)
 {
+	if (client->res.body) free(client->res.body);
 	free(client);
 	return 0;
 }
@@ -31,9 +32,17 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 	while ((n = cweb_receive_head(&client->conn, &client->res)) > 0);
 	if (n < 0) return 0;
 
-	if (cweb_close(&client->conn)) return 0;
-
 	cweb_response_unpack(&client->res);
+
+	// printf("%s\n", cweb_header(&client->res, "Content-Length", 0));
+
+	client->res.body = calloc(1, CWEB_BODY_SIZE_DEF);
+	client->res.body_size = CWEB_BODY_SIZE_DEF;
+
+	while ((n = cweb_receive_body(&client->conn, &client->res)) > 0);
+	if (n < 0) return 0;
+
+	if (cweb_close(&client->conn)) return 0;
 
 	return &client->res;
 }

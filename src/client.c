@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	printf("--------------------------------------------------------------------------------\n");
 	for (int i = 0; i < res->headers_num; i++) printf("%s: %s\n", res->headers[i].name, res->headers[i].value);
 	printf("--------------------------------------------------------------------------------\n");
-	// printf("%s\n", res->body);
+	printf("%s\n", res->body);
 
 	cweb_client_destroy(client);
 

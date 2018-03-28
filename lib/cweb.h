@@ -11,6 +11,7 @@
 
 #define CWEB_HEADERS_MAX 100
 #define CWEB_BUF_MAX 10000
+#define CWEB_BODY_SIZE_DEF 1000000
 
 struct cweb_connection {
 	int socket;
@@ -43,6 +44,7 @@ struct cweb_response {
 	size_t buf_len;
 	char* body;
 	size_t body_len;
+	size_t body_size;
 };
 
 struct cweb_client {

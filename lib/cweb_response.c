@@ -21,7 +21,18 @@ int cweb_receive_head(struct cweb_connection* conn, struct cweb_response* res)
 
 int cweb_receive_body(struct cweb_connection* conn, struct cweb_response* res)
 {
-	return 0;
+	int r;
+
+	if (res->body_len >= res->body_size)
+	{
+		errno = EMSGSIZE; // message too long
+		return -1;
+	}
+
+	r = read(conn->socket, res->body + res->body_len, res->body_size - res->body_len);
+	res->body_len += r;
+
+	return r;
 }
 
 int cweb_response_unpack(struct cweb_response* res)
