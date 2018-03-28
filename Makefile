@@ -5,3 +5,4 @@ client:
 
 clean:
 	rm build/*
+	rm temp/*

@@ -21,7 +21,7 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 	if (cweb_connect(&client->conn, host)) return 0;
 
 	cweb_request(&client->conn, &client->req, "GET", uri);
-	client->req.version = "HTTP/1.1";
+	client->req.version = CWEB_HTTP_DEF;
 
 	cweb_header(&client->req, "Host", client->conn.host);
 	cweb_header(&client->req, "Accept-Encoding", "chunked");
@@ -64,6 +64,8 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 				((n = cweb_receive_chunk(&client->conn, &client->res, chunk_eff_len - chunk_read)) > 0);
 				chunk_read += n);
 			if (n < 0) return 0;
+
+			printf("%d\n", chunk_len);
 		}
 	}
 	else

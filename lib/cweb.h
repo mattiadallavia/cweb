@@ -11,7 +11,9 @@
 
 #define CWEB_HEADERS_MAX 100
 #define CWEB_BUF_MAX 10000
-#define CWEB_BODY_SIZE_DEF 1000000
+#define CWEB_BODY_SIZE_DEF 100000
+
+#define CWEB_HTTP_DEF "HTTP/1.1"
 
 struct cweb_connection {
 	int socket;

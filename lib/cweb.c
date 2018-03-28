@@ -13,7 +13,6 @@ int cweb_connect(struct cweb_connection* conn, char* address)
 
 	if (e = getaddrinfo(address, "http", &hints, &ainfo))
 	{
-		// fprintf(stderr, "%s\n", gai_strerror(e));
 		errno = ENXIO; // No such device or address
 		return -1;
 	}
