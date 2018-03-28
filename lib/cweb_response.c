@@ -1,9 +1,8 @@
 #include "cweb.h"
 
-int cweb_receive(struct cweb_connection* conn, struct cweb_response* res)
+int cweb_receive_head(struct cweb_connection* conn, struct cweb_response* res)
 {
-	int r = read(conn->socket, res->buf + res->buf_len, CWEB_BUF_MAX - res->buf_len);
-	res->buf_len += r;
+	int r;
 
 	if (res->buf_len >= CWEB_BUF_MAX)
 	{
@@ -11,7 +10,18 @@ int cweb_receive(struct cweb_connection* conn, struct cweb_response* res)
 		return -1;
 	}
 
-	return r;
+	r = read(conn->socket, res->buf + res->buf_len, 1);
+
+	if (!r) return -1; // early end
+
+	res->buf_len++;
+
+	return ((res->buf[res->buf_len-1] != '\n')) || ((res->buf[res->buf_len-3] != '\n'));
+}
+
+int cweb_receive_body(struct cweb_connection* conn, struct cweb_response* res)
+{
+	return 0;
 }
 
 int cweb_response_unpack(struct cweb_response* res)
@@ -30,7 +40,7 @@ int cweb_response_unpack(struct cweb_response* res)
 	*buf_next = 0; // tappo
 	buf_next+=2; // skip \n
 
-	res->body = cweb_headers_unpack(res, buf_next - res->buf) + res->buf;
+	cweb_headers_unpack(res, buf_next - res->buf) + res->buf;
 
 	return 0;
 }

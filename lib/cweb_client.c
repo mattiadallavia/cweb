@@ -28,7 +28,7 @@ struct cweb_response* cweb_client_get(struct cweb_client* client, char* host, ch
 	while ((n = cweb_send(&client->conn, &client->req)) > 0);
 	if (n < 0) return 0;
 
-	while ((n = cweb_receive(&client->conn, &client->res)) > 0);
+	while ((n = cweb_receive_head(&client->conn, &client->res)) > 0);
 	if (n < 0) return 0;
 
 	if (cweb_close(&client->conn)) return 0;
